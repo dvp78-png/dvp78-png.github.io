@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ASC 740 Tax Provision Calculator | Dylan Prithyani</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root { --bg:#fff; --surface:#f6f7f9; --text:#1a1d23; --muted:#5b6270; --border:#e3e6eb; --accent:#2563eb; --accent-soft:#e8efff; --good:#15803d; --bad:#b91c1c; }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family:"Inter",system-ui,sans-serif; background:var(--bg); color:var(--text); line-height:1.55; }
+  a { color:var(--accent); text-decoration:none; } a:hover { text-decoration:underline; }
+  .wrap { max-width:1000px; margin:0 auto; padding:0 20px; }
+  header { padding:40px 0 24px; }
+  .back { font-size:.9rem; font-weight:600; }
+  h1 { font-size:clamp(1.7rem,4vw,2.3rem); margin:14px 0 8px; }
+  h2 { font-size:1rem; margin-bottom:12px; }
+  .lead { color:var(--muted); max-width:740px; }
+  .panel { background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:20px; margin-bottom:20px; }
+  .row3 { display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:14px; }
+  label { display:block; font-size:.85rem; font-weight:600; margin-bottom:4px; }
+  .hint { font-weight:400; color:var(--muted); font-size:.8rem; }
+  input, select { width:100%; padding:8px 10px; border:1px solid var(--border); border-radius:8px; font:inherit; background:#fff; }
+  .td-row { display:grid; grid-template-columns:1fr 140px 270px 36px; gap:10px; margin-bottom:8px; align-items:center; }
+  .td-head { font-size:.75rem; font-weight:700; text-transform:uppercase; letter-spacing:.04em; color:var(--muted); }
+  .x { border:none; background:none; color:var(--muted); font-size:1.2rem; cursor:pointer; }
+  .x:hover { color:var(--bad); }
+  .add { margin-top:6px; background:var(--accent-soft); color:var(--accent); border:none; padding:8px 14px; border-radius:8px; font:inherit; font-weight:600; cursor:pointer; }
+  .kpis { display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:12px; margin-bottom:20px; }
+  .kpi { border:1px solid var(--border); border-radius:12px; padding:14px; }
+  .kpi .k { font-size:.75rem; color:var(--muted); text-transform:uppercase; letter-spacing:.04em; font-weight:600; }
+  .kpi .v { font-size:1.35rem; font-weight:700; margin-top:4px; }
+  .two { display:grid; grid-template-columns:1fr 1fr; gap:20px; }
+  table { width:100%; border-collapse:collapse; font-size:.92rem; }
+  th, td { padding:8px 10px; text-align:right; border-bottom:1px solid var(--border); }
+  th:first-child, td:first-child { text-align:left; }
+  th { font-size:.75rem; text-transform:uppercase; letter-spacing:.04em; color:var(--muted); }
+  tr.total td { font-weight:700; border-top:2px solid var(--text); }
+  td.cr { padding-left:28px; }
+  .note { font-size:.82rem; color:var(--muted); margin-top:12px; }
+  .warn { color:var(--bad); font-weight:600; font-size:.88rem; margin-top:10px; }
+  footer { border-top:1px solid var(--border); padding:24px 0; font-size:.85rem; color:var(--muted); margin-top:20px; }
+  .panel { overflow-x:auto; }
+  @media (max-width:760px) { th, td { padding:6px; } table { font-size:.82rem; } .two { grid-template-columns:1fr; } .td-row { grid-template-columns:1fr 1fr; } .td-row .x { justify-self:end; } .td-head { display:none; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <a class="back" href="../#projects">← Back to portfolio</a>
+    <h1>ASC 740 Income Tax Provision Calculator</h1>
+    <p class="lead">A simplified version of the tax provision workflow I supported as a tax intern: start from pre-tax book income, adjust for permanent and temporary book-to-tax differences, and get the current and deferred tax expense, deferred tax assets and liabilities, effective tax rate, rate reconciliation and journal entry.</p>
+  </header>
+
+  <div class="panel">
+    <h2>1. Book income and rates</h2>
+    <div class="row3">
+      <div><label>Pre-tax book income ($)</label><input type="number" id="book" value="2500000" step="10000"></div>
+      <div><label>Federal rate (%)</label><input type="number" id="fed" value="21" step="0.1" min="0" max="100"></div>
+      <div><label>State rate (%) <span class="hint">deductible for federal</span></label><input type="number" id="state" value="9" step="0.1" min="0" max="100"></div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h2>2. Permanent differences <span class="hint">(never reverse; change the effective rate)</span></h2>
+    <div class="td-row td-head"><span>Description</span><span>Amount ($)</span><span>Effect on taxable income</span><span></span></div>
+    <div id="perm"></div>
+    <button class="add" data-list="perm">+ Add permanent difference</button>
+  </div>
+
+  <div class="panel">
+    <h2>3. Temporary differences <span class="hint">(current-year originations; reverse in future years)</span></h2>
+    <div class="td-row td-head"><span>Description</span><span>Amount ($)</span><span>Effect on taxable income</span><span></span></div>
+    <div id="temp"></div>
+    <button class="add" data-list="temp">+ Add temporary difference</button>
+  </div>
+
+  <div class="kpis">
+    <div class="kpi"><div class="k">Taxable income</div><div class="v" id="k-ti"></div></div>
+    <div class="kpi"><div class="k">Current tax expense</div><div class="v" id="k-cur"></div></div>
+    <div class="kpi"><div class="k">Deferred tax expense (benefit)</div><div class="v" id="k-def"></div></div>
+    <div class="kpi"><div class="k">Total tax expense</div><div class="v" id="k-tot"></div></div>
+    <div class="kpi"><div class="k">Effective tax rate</div><div class="v" id="k-etr"></div></div>
+  </div>
+  <div id="warn" class="warn"></div>
+
+  <div class="two">
+    <div class="panel">
+      <h2>Effective rate reconciliation</h2>
+      <table><thead><tr><th>Item</th><th>Amount</th><th>Rate</th></tr></thead><tbody id="recon"></tbody></table>
+    </div>
+    <div class="panel">
+      <h2>Provision journal entry</h2>
+      <table><thead><tr><th>Account</th><th>Debit</th><th>Credit</th></tr></thead><tbody id="je"></tbody></table>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h2>Deferred tax roll-forward (current-year activity)</h2>
+    <table><thead><tr><th>Temporary difference</th><th>Amount</th><th>Deferred tax asset</th><th>Deferred tax liability</th></tr></thead><tbody id="dt"></tbody></table>
+    <p class="note">Simplifications: one blended rate (federal + state × (1 − federal)) applied to all items; assumes positive taxable income (no NOLs or credits), no valuation allowance, no uncertain tax positions, and no change in enacted rates. Default figures are a made-up example for illustration only.</p>
+  </div>
+</div>
+<div class="wrap"><footer>Built by Dylan Prithyani · HTML, CSS &amp; JavaScript · <a href="https://github.com/dvp78-png/dvp78-png.github.io/blob/main/projects/tax-provision.html" target="_blank" rel="noopener">View source</a></footer></div>
+
+<script>
+const $ = id => document.getElementById(id);
+const usd = n => (n < 0 ? "($" + Math.abs(Math.round(n)).toLocaleString("en-US") + ")" : "$" + Math.round(n).toLocaleString("en-US"));
+const pct = n => isFinite(n) ? n.toFixed(2) + "%" : "n/a";
+const esc = s => s.replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+
+const data = {
+  perm: [
+    { d: "Nondeductible meals (50%)", a: 40000, s: 1 },
+    { d: "Fines and penalties", a: 15000, s: 1 },
+    { d: "Tax-exempt municipal bond interest", a: 60000, s: -1 },
+  ],
+  temp: [
+    { d: "Excess tax depreciation (MACRS vs. straight-line)", a: 300000, s: -1 },
+    { d: "Warranty reserve accrual (not yet deductible)", a: 120000, s: 1 },
+    { d: "Increase in bad debt allowance", a: 50000, s: 1 },
+    { d: "Prepaid expenses deducted for tax", a: 30000, s: -1 },
+  ],
+};
+
+function renderInputs(key) {
+  const add = key === "temp" ? ["Increases taxable income → DTA", "Decreases taxable income → DTL"] : ["Add back (+ taxable income)", "Subtract (− taxable income)"];
+  $(key).innerHTML = data[key].map((r, i) => `
+    <div class="td-row">
+      <input aria-label="Description" value="${esc(r.d)}" data-k="${key}" data-i="${i}" data-f="d">
+      <input aria-label="Amount" type="number" min="0" step="1000" value="${r.a}" data-k="${key}" data-i="${i}" data-f="a">
+      <select aria-label="Effect" data-k="${key}" data-i="${i}" data-f="s">
+        <option value="1" ${r.s === 1 ? "selected" : ""}>${add[0]}</option>
+        <option value="-1" ${r.s === -1 ? "selected" : ""}>${add[1]}</option>
+      </select>
+      <button class="x" title="Remove" data-k="${key}" data-i="${i}" data-rm="1">×</button>
+    </div>`).join("");
+}
+
+function calc() {
+  const book = parseFloat($("book").value) || 0;
+  const fed = (parseFloat($("fed").value) || 0) / 100, st = (parseFloat($("state").value) || 0) / 100;
+  const rate = fed + st * (1 - fed);
+  const val = r => Math.max(0, r.a || 0) * r.s;
+  const permNet = data.perm.reduce((t, r) => t + val(r), 0);
+  const tempNet = data.temp.reduce((t, r) => t + val(r), 0);
+  const ti = book + permNet + tempNet;
+  const current = ti * rate;
+  let dta = 0, dtl = 0;
+  data.temp.forEach(r => { const v = val(r) * rate; if (v > 0) dta += v; else dtl += -v; });
+  const deferred = dtl - dta;
+  const total = current + deferred;
+  const etr = book !== 0 ? total / book * 100 : NaN;
+
+  $("k-ti").textContent = usd(ti);
+  $("k-cur").textContent = usd(current);
+  $("k-def").textContent = usd(deferred);
+  $("k-tot").textContent = usd(total);
+  $("k-etr").textContent = pct(etr);
+  $("warn").textContent = ti < 0 ? "Taxable income is negative. This simplified model doesn't handle net operating losses, so current tax is shown as a negative amount (a benefit)." : "";
+
+  const rows = [["Tax at blended statutory rate", book * rate]];
+  data.perm.forEach(r => rows.push([r.d, val(r) * rate]));
+  $("recon").innerHTML = rows.map(([n, a]) => `<tr><td>${esc(n)}</td><td>${usd(a)}</td><td>${pct(book ? a / book * 100 : NaN)}</td></tr>`).join("") +
+    `<tr class="total"><td>Total income tax expense</td><td>${usd(total)}</td><td>${pct(etr)}</td></tr>`;
+
+  const je = [];
+  je.push(["Income tax expense", total >= 0 ? total : 0, total < 0 ? -total : 0, false]);
+  if (dta) je.push(["Deferred tax asset", dta, 0, false]);
+  if (dtl) je.push(["Deferred tax liability", 0, dtl, true]);
+  je.push(["Income taxes payable", current < 0 ? -current : 0, current >= 0 ? current : 0, true]);
+  const dr = je.reduce((t, r) => t + r[1], 0), cr = je.reduce((t, r) => t + r[2], 0);
+  $("je").innerHTML = je.map(([n, d, c, isCr]) => `<tr><td class="${isCr ? "cr" : ""}">${n}</td><td>${d ? usd(d) : ""}</td><td>${c ? usd(c) : ""}</td></tr>`).join("") +
+    `<tr class="total"><td>Totals ${Math.abs(dr - cr) < 1 ? "✓ balanced" : "⚠"}</td><td>${usd(dr)}</td><td>${usd(cr)}</td></tr>`;
+
+  $("dt").innerHTML = data.temp.map(r => { const v = val(r) * rate; return `<tr><td>${esc(r.d)}</td><td>${usd(Math.max(0, r.a || 0))}</td><td>${v > 0 ? usd(v) : ""}</td><td>${v < 0 ? usd(-v) : ""}</td></tr>`; }).join("") +
+    `<tr class="total"><td>Total (net ${dta >= dtl ? "DTA" : "DTL"} ${usd(Math.abs(dta - dtl))})</td><td></td><td>${usd(dta)}</td><td>${usd(dtl)}</td></tr>`;
+}
+
+document.addEventListener("input", e => {
+  const t = e.target;
+  if (t.dataset.k) { const r = data[t.dataset.k][+t.dataset.i]; const f = t.dataset.f; r[f] = f === "d" ? t.value : f === "s" ? +t.value : parseFloat(t.value) || 0; }
+  calc();
+});
+document.addEventListener("change", e => { if (e.target.dataset.f === "s") calc(); });
+document.addEventListener("click", e => {
+  const t = e.target;
+  if (t.dataset.rm) { data[t.dataset.k].splice(+t.dataset.i, 1); renderInputs(t.dataset.k); calc(); }
+  if (t.dataset.list) { data[t.dataset.list].push({ d: "New item", a: 0, s: 1 }); renderInputs(t.dataset.list); calc(); }
+});
+renderInputs("perm"); renderInputs("temp"); calc();
+</script>
+</body>
+</html>
