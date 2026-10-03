@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dylan Prithyani | Portfolio</title>
+  <meta name="description" content="Portfolio of Dylan Prithyani, Rutgers Business School student.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #ffffff;
+      --surface: #f6f7f9;
+      --text: #1a1d23;
+      --muted: #5b6270;
+      --border: #e3e6eb;
+      --accent: #2563eb;
+      --accent-soft: #e8efff;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: "Inter", system-ui, -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+    }
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    .container { max-width: 880px; margin: 0 auto; padding: 0 24px; }
+
+    /* Nav */
+    nav {
+      position: sticky; top: 0; z-index: 10;
+      background: rgba(255,255,255,0.92);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--border);
+    }
+    nav .container { display: flex; justify-content: space-between; align-items: center; height: 60px; }
+    .logo { font-weight: 700; color: var(--text); }
+    .nav-links { display: flex; gap: 24px; list-style: none; }
+    .nav-links a { color: var(--muted); font-weight: 500; font-size: 0.95rem; }
+    .nav-links a:hover { color: var(--accent); text-decoration: none; }
+
+    /* Hero */
+    header.hero { padding: 96px 0 72px; }
+    .eyebrow { color: var(--accent); font-weight: 600; font-size: 0.9rem; letter-spacing: 0.04em; text-transform: uppercase; }
+    .hero h1 { font-size: clamp(2.2rem, 5vw, 3.2rem); line-height: 1.15; margin: 12px 0 20px; }
+    .statement { font-size: clamp(1.1rem, 2.4vw, 1.3rem); color: var(--muted); max-width: 680px; }
+    .cta { display: flex; gap: 12px; margin-top: 32px; flex-wrap: wrap; }
+    .btn {
+      display: inline-block; padding: 11px 20px; border-radius: 8px;
+      font-weight: 600; font-size: 0.95rem; border: 1px solid var(--accent);
+    }
+    .btn-primary { background: var(--accent); color: #fff; }
+    .btn-secondary { color: var(--accent); background: transparent; }
+    .btn:hover { text-decoration: none; opacity: 0.9; }
+
+    /* Sections */
+    section { padding: 64px 0; border-top: 1px solid var(--border); }
+    section h2 { font-size: 1.6rem; margin-bottom: 8px; }
+    .section-sub { color: var(--muted); margin-bottom: 32px; }
+
+    /* Skills */
+    .skills-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px; }
+    .skill-group {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 12px; padding: 22px;
+    }
+    .skill-group h3 { font-size: 1rem; margin-bottom: 14px; }
+    .tags { display: flex; flex-wrap: wrap; gap: 8px; list-style: none; }
+    .tags li {
+      background: var(--accent-soft); color: var(--accent);
+      padding: 5px 12px; border-radius: 999px; font-size: 0.88rem; font-weight: 500;
+    }
+
+    /* Projects */
+    .projects { display: grid; gap: 20px; }
+    .project {
+      border: 1px solid var(--border); border-radius: 12px; padding: 26px;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .project:hover { border-color: var(--accent); box-shadow: 0 6px 20px rgba(37,99,235,0.08); }
+    .project h3 { font-size: 1.15rem; margin-bottom: 6px; }
+    .project .meta { color: var(--muted); font-size: 0.88rem; margin-bottom: 12px; }
+    .project p { margin-bottom: 16px; }
+    .project .links { display: flex; gap: 18px; font-weight: 600; font-size: 0.95rem; }
+
+    /* Footer */
+    footer { padding: 48px 0; border-top: 1px solid var(--border); text-align: center; color: var(--muted); }
+    footer h2 { color: var(--text); font-size: 1.4rem; margin-bottom: 8px; }
+    footer .cta { justify-content: center; margin: 20px 0 28px; }
+    footer small { font-size: 0.85rem; }
+
+    @media (max-width: 600px) {
+      .nav-links { gap: 14px; }
+      .nav-links a { font-size: 0.85rem; }
+      header.hero { padding: 64px 0 48px; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <div class="container">
+      <a href="#top" class="logo">Dylan Prithyani</a>
+      <ul class="nav-links">
+        <li><a href="#skills">Skills</a></li>
+        <li><a href="#projects">Projects</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <header class="hero" id="top">
+    <div class="container">
+      <p class="eyebrow">Rutgers Business School</p>
+      <h1>Hi, I'm Dylan.</h1>
+      <!-- PERSONAL STATEMENT: edit this one sentence -->
+      <p class="statement">
+        I'm a Rutgers Business School student who turns data into clear, actionable business decisions, combining analytical skills with a strong eye for storytelling and brand strategy.
+      </p>
+      <div class="cta">
+        <a class="btn btn-primary" href="#projects">View my work</a>
+        <a class="btn btn-secondary" href="mailto:dylanprithyani@gmail.com">Get in touch</a>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <!-- SKILLS: edit the tags to match your own skills -->
+    <section id="skills">
+      <div class="container">
+        <h2>Skills</h2>
+        <p class="section-sub">What I bring to a team.</p>
+        <div class="skills-grid">
+          <div class="skill-group">
+            <h3>Data &amp; Analytics</h3>
+            <ul class="tags">
+              <li>Excel (Pivot Tables, VLOOKUP)</li>
+              <li>SQL</li>
+              <li>Python (pandas)</li>
+              <li>Tableau</li>
+              <li>Financial Modeling</li>
+            </ul>
+          </div>
+          <div class="skill-group">
+            <h3>Business &amp; Marketing</h3>
+            <ul class="tags">
+              <li>Market Research</li>
+              <li>Personal &amp; Brand Strategy</li>
+              <li>Social Media Analytics</li>
+              <li>Competitive Analysis</li>
+            </ul>
+          </div>
+          <div class="skill-group">
+            <h3>Tools</h3>
+            <ul class="tags">
+              <li>GitHub</li>
+              <li>HTML &amp; CSS</li>
+              <li>PowerPoint</li>
+              <li>Canva</li>
+              <li>Google Workspace</li>
+            </ul>
+          </div>
+          <div class="skill-group">
+            <h3>Professional</h3>
+            <ul class="tags">
+              <li>Presenting &amp; Storytelling</li>
+              <li>Team Leadership</li>
+              <li>Problem Solving</li>
+              <li>Written Communication</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PROJECTS: replace with your own projects and links -->
+    <section id="projects">
+      <div class="container">
+        <h2>Projects</h2>
+        <p class="section-sub">A few things I've built and worked on.</p>
+        <div class="projects">
+
+          <article class="project">
+            <h3>Personal Portfolio Website</h3>
+            <p class="meta">HTML · CSS · GitHub Pages · 2026</p>
+            <p>Designed and deployed this responsive portfolio site from scratch as part of Rutgers' Building Your Brand course, using GitHub for version control and GitHub Pages for hosting.</p>
+            <div class="links">
+              <a href="https://github.com/dvp78-png/dvp78-png.github.io" target="_blank" rel="noopener">View code →</a>
+              <a href="https://dvp78-png.github.io" target="_blank" rel="noopener">Live site →</a>
+            </div>
+          </article>
+
+          <article class="project">
+            <h3>Retail Sales Performance Dashboard</h3>
+            <p class="meta">Excel · Tableau · Data Analysis</p>
+            <p>Cleaned and analyzed two years of retail sales data to identify top-performing regions and seasonal trends, then built an interactive dashboard that helped surface a 12% revenue opportunity in underperforming product lines.</p>
+            <div class="links">
+              <a href="https://github.com/dvp78-png" target="_blank" rel="noopener">View on GitHub →</a>
+            </div>
+          </article>
+
+          <article class="project">
+            <h3>Brand Strategy Case Competition</h3>
+            <p class="meta">Market Research · Presentation · Team of 4</p>
+            <p>Led a four-person team to develop a go-to-market and social media strategy for a local consumer brand, including customer surveys, competitor benchmarking, and a final pitch to a panel of judges.</p>
+            <div class="links">
+              <a href="https://github.com/dvp78-png" target="_blank" rel="noopener">See project details →</a>
+            </div>
+          </article>
+
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer id="contact">
+    <div class="container">
+      <h2>Let's connect</h2>
+      <p>Open to internships, projects, and conversations.</p>
+      <div class="cta">
+        <a class="btn btn-primary" href="mailto:dylanprithyani@gmail.com">Email me</a>
+        <a class="btn btn-secondary" href="https://github.com/dvp78-png" target="_blank" rel="noopener">GitHub</a>
+      </div>
+      <small>© 2026 Dylan Prithyani</small>
+    </div>
+  </footer>
+
+</body>
+</html>
